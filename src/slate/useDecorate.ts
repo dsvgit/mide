@@ -10,12 +10,14 @@ export const useDecorate = () => {
   const decorate: (entry: NodeEntry) => Range[] = useCallback(
     ([node, path]) => {
       const ranges: Range[] = []
+
       if (!Text.isText(node)) {
         return ranges
       }
-      const tokens = Prism.tokenize(node.text, Prism.languages.javascript)
-      let start = 0
 
+      const tokens = Prism.tokenize(node.text, Prism.languages.tsx)
+
+      let start = 0
       for (const token of tokens) {
         const length = getLength(token)
         const end = start + length
@@ -30,6 +32,8 @@ export const useDecorate = () => {
 
         start = end
       }
+
+      console.log(node, tokens, ranges);
 
       return ranges
     },
@@ -53,7 +57,13 @@ const getLength = (token: string | Prism.Token): number => {
 
 // modifications and additions to prism library
 
-Prism.languages.javascript = Prism.languages.extend('tsx', {})
+Prism.languages.tsx = Prism.languages.extend('tsx', {
+  space: {
+    pattern: /\s/,
+    // lookbehind: true,
+    greedy: true
+  }
+})
 Prism.languages.insertBefore('tsx', 'prolog', {
   comment: { pattern: /\/\/[^\n]*/, alias: 'comment' },
 })

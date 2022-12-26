@@ -7,6 +7,7 @@ import { initialValue } from '@/initialValue'
 import { useDecorate } from '@/slate/useDecorate'
 import { useRenderLeaf } from '@/slate/useRenderLeaf'
 import { Tooltip } from '@/slate/Tooltip'
+import { useOnKeydown } from '@/slate/useOnKeydown'
 
 export const SlateEditor = () => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
@@ -14,6 +15,7 @@ export const SlateEditor = () => {
   const renderLeaf = useRenderLeaf()
 
   const decorate = useDecorate()
+  const onKeyDown = useOnKeydown(editor)
 
   return (
     <Slate editor={editor} value={value} onChange={setValue}>
@@ -22,6 +24,7 @@ export const SlateEditor = () => {
         className="language-tsx"
         decorate={decorate}
         renderLeaf={renderLeaf}
+        onKeyDown={onKeyDown}
       />
     </Slate>
   )

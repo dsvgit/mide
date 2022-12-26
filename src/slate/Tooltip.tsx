@@ -40,6 +40,14 @@ export const Tooltip = () => {
       <button
         onMouseDown={(e) => {
           e.preventDefault()
+          editor.insertText('    ')
+        }}
+      >
+        tab
+      </button>
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault()
           editor.insertText(`""`)
           Transforms.move(editor, {
             distance: 1,
