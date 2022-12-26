@@ -6,6 +6,7 @@ import { withHistory } from 'slate-history'
 import { initialValue } from '@/initialValue'
 import { useDecorate } from '@/slate/useDecorate'
 import { useRenderLeaf } from '@/slate/useRenderLeaf'
+import { Tooltip } from '@/slate/Tooltip'
 
 export const SlateEditor = () => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
@@ -16,6 +17,7 @@ export const SlateEditor = () => {
 
   return (
     <Slate editor={editor} value={value} onChange={setValue}>
+      <Tooltip />
       <Editable
         className="language-tsx"
         decorate={decorate}

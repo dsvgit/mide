@@ -46,6 +46,31 @@ body {
   content: counter(terminal-counter) "";
 }
 
+.tooltip {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  z-index: 1;
+  padding: 10px;
+  flex-direction: column;
+  transform: translate3d(100%, 0, 0);
+  transition: transform 200ms;
+}
+
+.tooltip--visible {
+  transform: translate3d(0, 0, 0);
+}
+
+.tooltip button {
+  background: transparent;
+  border: 1px solid;
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
