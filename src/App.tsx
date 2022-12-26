@@ -1,11 +1,10 @@
-import { Editor } from './Editor'
+import { SlateEditor } from '@/slate/SlateEditor'
 
-function App() {
-  return (
-    <div>
-      <Editor />
-    </div>
-  )
+import '@/styles/index.css'
+import '@/styles/prism-dracula.css'
+
+const App = () => {
+  return <SlateEditor />
 }
 
 export default App
