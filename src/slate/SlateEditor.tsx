@@ -8,14 +8,20 @@ import { useDecorate } from '@/slate/useDecorate'
 import { useRenderLeaf } from '@/slate/useRenderLeaf'
 import { Tooltip } from '@/slate/Tooltip'
 import { useOnKeydown } from '@/slate/useOnKeydown'
+import { useRecoilState } from 'recoil'
+import { CurrentFileContentState } from '@/state/files'
 
 export const SlateEditor = () => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useRecoilState(CurrentFileContentState)
   const renderLeaf = useRenderLeaf()
 
   const decorate = useDecorate()
   const onKeyDown = useOnKeydown(editor)
+
+  if (!value) {
+    return null
+  }
 
   return (
     <Slate editor={editor} value={value} onChange={setValue}>

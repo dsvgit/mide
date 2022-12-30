@@ -72,6 +72,36 @@ body {
   margin-bottom: 10px;
 }
 
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.layout > *:nth-child(1) {
+  flex: 0;
+  flex-basis: 10%;
+}
+
+.layout > * {
+  flex: 1;
+}
+
+.fileName {
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  background: transparent;
+}
+
+.fileName--selected {
+  background-color: dodgerblue;
+}
+
+.filesTree {
+  display: flex;
+  flex-direction: column;
+}
+
 /*@media (prefers-color-scheme: light) {*/
 /*  :root {*/
 /*    color: #213547;*/
