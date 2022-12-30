@@ -33,8 +33,6 @@ export const useDecorate = () => {
         start = end
       }
 
-      console.log(node, tokens, ranges);
-
       return ranges
     },
     []
@@ -61,8 +59,8 @@ Prism.languages.tsx = Prism.languages.extend('tsx', {
   space: {
     pattern: /\s/,
     // lookbehind: true,
-    greedy: true
-  }
+    greedy: true,
+  },
 })
 Prism.languages.insertBefore('tsx', 'prolog', {
   comment: { pattern: /\/\/[^\n]*/, alias: 'comment' },

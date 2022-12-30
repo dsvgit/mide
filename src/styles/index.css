@@ -26,16 +26,16 @@ body {
   height: 100%;
 }
 
-[data-slate-editor="true"] {
+[data-slate-editor='true'] {
   height: 100%;
   counter-reset: terminal-counter;
 }
 
-[data-slate-node="element"] {
+[data-slate-node='element'] {
   padding-left: 60px;
 }
 
-[data-slate-node="element"]::before {
+[data-slate-node='element']::before {
   position: absolute;
   left: 0;
   width: 30px;
@@ -43,7 +43,7 @@ body {
   text-align: right;
 
   counter-increment: terminal-counter;
-  content: counter(terminal-counter) "";
+  content: counter(terminal-counter) '';
 }
 
 .tooltip {
@@ -64,16 +64,17 @@ body {
 
 .tooltip button {
   background: transparent;
-  border: 1px solid;
+  border: 1px solid #ffffff;
+  color: #fff;
   padding: 5px 10px;
   border-radius: 20px;
   cursor: pointer;
   margin-bottom: 10px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-}
+/*@media (prefers-color-scheme: light) {*/
+/*  :root {*/
+/*    color: #213547;*/
+/*    background-color: #ffffff;*/
+/*  }*/
+/*}*/
