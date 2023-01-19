@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 import { useRecoilValue } from 'recoil'
 import cn from 'classnames'
 import TreeView from '@mui/lab/TreeView'
@@ -30,7 +30,7 @@ function RichObjectTreeView({ root }: { root: ITreeNode }) {
       defaultExpanded={['../src']}
       defaultExpandIcon={'▶'}
       sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-      onNodeSelect={(_, value) => {
+      onNodeSelect={(_: SyntheticEvent, value: string) => {
         const parts = value.split('/')
         const filename = parts[parts.length - 1]
 
