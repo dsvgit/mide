@@ -8,7 +8,7 @@ export const useOnKeydown = (editor: Editor) => {
 
       if (e.shiftKey) {
       } else {
-        Editor.insertText(editor, '    ')
+        Editor.insertText(editor, '  ')
       }
     }
   }

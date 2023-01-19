@@ -24,6 +24,14 @@ fn read_dir(path: &str) -> Vec<String> {
     result
 }
 
+#[tauri::command]
+fn is_dir(path: &str) -> bool {
+    let entry = fs::metadata(path).expect("Failed to read entry");
+    let test = entry.is_dir();
+
+    test
+}
+
 // read_file function that reads file contents
 #[tauri::command]
 fn read_file(path: &str) -> String {
@@ -39,7 +47,7 @@ fn write_file(path: &str, contents: &str) {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, read_dir, read_file, write_file])
+        .invoke_handler(tauri::generate_handler![greet, read_dir, is_dir, read_file, write_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

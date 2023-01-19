@@ -1,58 +1,67 @@
 import React from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import cn from 'classnames'
+import TreeView from '@mui/lab/TreeView'
+import TreeItem from '@mui/lab/TreeItem'
 
-import {
-  CurrentFileContentState,
-  CurrentFileState,
-  FilesSelector,
-} from '@/state/files'
-import { invoke } from '@tauri-apps/api'
-import { Descendant, Node } from 'slate'
+import { FilesStore } from '@/state/FilesStore'
+import { db } from '@/db/provider'
+import { ITreeNode } from '@/db/db'
+
+function RichObjectTreeView({ root }: { root: ITreeNode }) {
+  const fileActions = FilesStore.useFileActions()
+
+  const openFile = (file: string) => {
+    fileActions.openFile(`../src/${file}`, file)
+  }
+
+  const renderTree = (node: ITreeNode) => (
+    <TreeItem key={node.path} nodeId={node.path} label={node.path}>
+      {Array.isArray(node.children)
+        ? node.children.map((node) => renderTree(node))
+        : null}
+    </TreeItem>
+  )
+
+  return (
+    <TreeView
+      aria-label="rich object"
+      defaultCollapseIcon={'▼'}
+      defaultExpanded={['../src']}
+      defaultExpandIcon={'▶'}
+      sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
+      onNodeSelect={(_, value) => {
+        const parts = value.split('/')
+        const filename = parts[parts.length - 1]
+
+        if (filename.includes('.')) {
+          openFile(value)
+        }
+      }}
+    >
+      {renderTree(root)}
+    </TreeView>
+  )
+}
 
 export const FilesTree = () => {
-  const [currentFile, setCurrentFile] = useRecoilState(CurrentFileState)
-  const [currentFileContent, setCurrentFileContent] = useRecoilState(
-    CurrentFileContentState
-  )
-  const files = useRecoilValue(FilesSelector)
+  const selectedFile = useRecoilValue(FilesStore.selectedFile)
+  const selectedContent = useRecoilValue(FilesStore.selectedContent)
+  const files = useRecoilValue(FilesStore.files)
+  const fileActions = FilesStore.useFileActions()
+
+  const openFile = (file: string) => {
+    fileActions.openFile(`../src/${file}`, file)
+  }
 
   return (
     <div className="filesTree">
-      {files.map((file) => (
-        <FileItem
-          key={file}
-          name={file}
-          selected={file === currentFile}
-          onClick={async () => {
-            setCurrentFile(file)
-
-            const text = (await invoke('read_file', {
-              path: `../src/${file}`,
-            })) as string
-            const content = text
-              .trimStart()
-              .split('\n')
-              .map((line) => ({
-                type: 'paragraph',
-                children: [{ text: line }],
-              })) as Descendant[]
-
-            setCurrentFileContent(null)
-            setTimeout(() => {
-              setCurrentFileContent(content)
-            }, 10)
-          }}
-        />
-      ))}
+      <RichObjectTreeView root={files} />
       <button
-        onClick={async () => {
-          await invoke('write_file', {
-            path: `../src/${currentFile}`,
-            contents: currentFileContent
-              ?.map((node) => Node.string(node))
-              .join('\n'),
-          })
+        onClick={() => {
+          if (selectedContent) {
+            db.fs.writeFile(`../src/${selectedFile}`, selectedContent)
+          }
         }}
       >
         Save
@@ -63,17 +72,17 @@ export const FilesTree = () => {
 
 type FileItemProp = {
   name: string
-  onClick?: () => void
+  onFileOpen?: (name: string) => void
   selected?: boolean
 }
 
 const FileItem = (props: FileItemProp) => {
-  const { name, selected, onClick } = props
+  const { name, selected, onFileOpen } = props
 
   return (
     <button
       className={cn('fileName', { 'fileName--selected': selected })}
-      onClick={onClick}
+      onClick={() => onFileOpen && onFileOpen(name)}
     >
       {name}
     </button>
