@@ -6,7 +6,9 @@ import 'prismjs/components/prism-tsx'
 import { NodeEntry, Range, Text } from 'slate'
 import { useCallback } from 'react'
 
-export const useDecorate = () => {
+import { SlateEditorProps } from '@/slate/SlateEditor'
+
+export const useDecorate = (options: Partial<SlateEditorProps>) => {
   const decorate: (entry: NodeEntry) => Range[] = useCallback(
     ([node, path]) => {
       const ranges: Range[] = []
@@ -15,7 +17,10 @@ export const useDecorate = () => {
         return ranges
       }
 
-      const tokens = Prism.tokenize(node.text, Prism.languages.tsx)
+      const tokens = Prism.tokenize(
+        node.text,
+        Prism.languages[options.language || 'plaintext']
+      )
 
       let start = 0
       for (const token of tokens) {

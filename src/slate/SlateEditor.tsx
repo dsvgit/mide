@@ -1,21 +1,27 @@
 import React, { useMemo } from 'react'
-import { createEditor } from 'slate'
+import { createEditor, Descendant } from 'slate'
 import { Editable, Slate, withReact } from 'slate-react'
 import { withHistory } from 'slate-history'
-import { useRecoilState } from 'recoil'
 
 import { useDecorate } from '@/slate/useDecorate'
 import { useRenderLeaf } from '@/slate/useRenderLeaf'
 import { useOnKeydown } from '@/slate/useOnKeydown'
-import { FilesStore } from '@/state/FilesStore'
 
-export const SlateEditor = () => {
+export type SlateEditorProps = {
+  value?: Descendant[]
+  setValue?: (value: Descendant[]) => void
+  onSave?: () => void
+  language?: string
+}
+
+export const SlateEditor = (props: SlateEditorProps) => {
+  const { value, setValue } = props
+
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
-  const [value, setValue] = useRecoilState(FilesStore.selectedContent)
   const renderLeaf = useRenderLeaf()
 
-  const decorate = useDecorate()
-  const onKeyDown = useOnKeydown(editor)
+  const decorate = useDecorate(props)
+  const onKeyDown = useOnKeydown(editor, props)
 
   if (!value) {
     return null

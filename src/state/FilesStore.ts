@@ -7,8 +7,8 @@ import { db } from '@/db/provider'
 import { ITreeNode } from '@/db/db'
 
 export const FilesStore = new (class {
-  files = selector<ITreeNode>({
-    key: 'FilesSelector_files',
+  root = selector<ITreeNode>({
+    key: 'FilesSelector_root',
     get: async ({ get }) => {
       return db.fs.readDir('../src')
     },
@@ -47,9 +47,21 @@ export const FilesStore = new (class {
         }
     )
 
+    const saveFile = useRecoilCallback(({ snapshot }) => async () => {
+      const selectedFile = await snapshot.getLoadable(this.selectedFile)
+        .contents
+      const selectedContent = await snapshot.getLoadable(this.selectedContent)
+        .contents
+
+      if (selectedContent) {
+        db.fs.writeFile(`../src/${selectedFile}`, selectedContent)
+      }
+    })
+
     return useMemo(
       () => ({
         openFile,
+        saveFile,
       }),
       []
     )

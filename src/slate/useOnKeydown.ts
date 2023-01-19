@@ -1,14 +1,25 @@
 import { Editor } from 'slate'
 import React from 'react'
+import isHotkey from 'is-hotkey'
 
-export const useOnKeydown = (editor: Editor) => {
+import { SlateEditorProps } from '@/slate/SlateEditor'
+
+export const useOnKeydown = (
+  editor: Editor,
+  options: Partial<SlateEditorProps>
+) => {
   const onKeyDown: React.KeyboardEventHandler = (e) => {
-    if (e.key === 'Tab') {
+    if (isHotkey('tab', e)) {
       e.preventDefault()
 
-      if (e.shiftKey) {
-      } else {
-        Editor.insertText(editor, '  ')
+      Editor.insertText(editor, '  ')
+    }
+
+    if (isHotkey('mod+s', e)) {
+      e.preventDefault()
+
+      if (options.onSave) {
+        options.onSave()
       }
     }
   }
