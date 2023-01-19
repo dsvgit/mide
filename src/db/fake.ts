@@ -4,7 +4,7 @@ import { text } from '@/initialValue'
 import { DB, ITreeNode } from '@/db/db'
 
 const root: ITreeNode = {
-  path: '',
+  path: 'root',
   children: [{ path: 'index.ts', children: [] }],
 }
 
