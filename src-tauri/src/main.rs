@@ -35,7 +35,13 @@ fn is_dir(path: &str) -> bool {
 // read_file function that reads file contents
 #[tauri::command]
 fn read_file(path: &str) -> String {
-    fs::read_to_string(path).expect("Failed to read file")
+    // read file to string with error handling and match
+    let str = match fs::read_to_string(path) {
+        Ok(str) => str,
+        Err(_) => String::from("null"),
+    };
+
+    str
 }
 
 // write_file function that writes file contents

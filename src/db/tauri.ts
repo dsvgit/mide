@@ -1,22 +1,25 @@
 import { invoke } from '@tauri-apps/api'
 import { Descendant, Node } from 'slate'
 
-import { DB, ITreeNode } from '@/db/db'
+import { DB, FS, ITreeNode } from '@/db/db'
 
 class TreeNode implements ITreeNode {
   public path: string
   public children: Array<ITreeNode>
+  public title: string
 
-  constructor(path: string) {
+  constructor(path: string, title: string) {
     this.path = path
     this.children = []
+    this.title = title
   }
 }
 
 export const tauriDb: DB = {
-  fs: new (class FS {
-    readDir = async (path: string) => {
-      const root = new TreeNode(path)
+  fs: new (class implements FS {
+    readDirRecursively = async (rootPath: string) => {
+      const rootTitle = rootPath.split('/').pop() || ''
+      const root = new TreeNode('', rootTitle)
 
       const stack = [root]
 
@@ -24,16 +27,28 @@ export const tauriDb: DB = {
         const currentNode = stack.pop()
 
         if (currentNode) {
+          const title = currentNode.path.split('/').pop() || ''
+
+          if (title === 'node_modules') {
+            continue
+          }
+
           const children = (await invoke('read_dir', {
-            path: currentNode.path,
+            path: rootPath + currentNode.path,
           })) as string[]
 
-          for (let child of children) {
+          for (let child of children.sort((a, b) => a.localeCompare(b))) {
             const childPath = `${currentNode.path}/${child}`
-            const childNode = new TreeNode(childPath)
+            const title = childPath.split('/').pop() || ''
+            const childNode = new TreeNode(childPath, title)
+
             currentNode.children.push(childNode)
 
-            if ((await invoke('is_dir', { path: childNode.path })) as boolean) {
+            if (
+              (await invoke('is_dir', {
+                path: rootPath + childNode.path,
+              })) as boolean
+            ) {
               stack.push(childNode)
             }
           }

@@ -5,12 +5,13 @@ import { DB, ITreeNode } from '@/db/db'
 
 const root: ITreeNode = {
   path: '/',
-  children: [{ path: 'index.ts', children: [] }],
+  title: 'project',
+  children: [{ path: 'index.ts', title: 'index.ts', children: [] }],
 }
 
 export const fakeDb: DB = {
   fs: {
-    readDir: async (path: string) => {
+    readDirRecursively: async (path: string) => {
       return root
     },
     readFile: async (path: string) => {

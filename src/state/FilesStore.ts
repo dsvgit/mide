@@ -7,12 +7,26 @@ import { db } from '@/db/provider'
 import { ITreeNode } from '@/db/db'
 import { textToContent } from '@/slate/utils'
 import { State } from '@/state/State'
+import { dialog } from '@tauri-apps/api'
 
 export const FilesStore = new (class {
-  root = selector<ITreeNode>({
-    key: 'FilesSelector_root',
+  projectDirectory = atom<string | null>({
+    key: 'FilesStore_projectDirectory',
+    default: '..',
+  })
+
+  filesTree = selector<ITreeNode | null>({
+    key: 'FilesSelector_filesTree',
     get: async ({ get }) => {
-      return db.fs.readDir('../src')
+      const projectDirectory = get(this.projectDirectory)
+
+      if (!projectDirectory) {
+        return null
+      }
+
+      const filesTree = await db.fs.readDirRecursively(projectDirectory)
+
+      return filesTree
     },
   })
 
@@ -27,30 +41,61 @@ export const FilesStore = new (class {
   })
 
   useFileActions = () => {
-    const openFile = State.useStoreCallback(
-      (_, set) => async (path: string, file: string) => {
+    const openDirectory = State.useStoreCallback((_, set) => async () => {
+      const dir = await dialog.open({
+        title: 'Open Project Directory',
+        directory: true,
+        multiple: false,
+        defaultPath: '~',
+      })
+
+      if (dir && !Array.isArray(dir)) {
         set(this.selectedFile, null)
         set(this.selectedContent, null)
+        set(this.projectDirectory, dir)
+      }
+    })
 
-        const text = await db.fs.readFile(path)
-        const content = textToContent(text)
+    const openFile = State.useStoreCallback(
+      (get, set) => async (relativePathname: string) => {
+        try {
+          const projectDirectory = get(this.projectDirectory)
+          const text = await db.fs.readFile(projectDirectory + relativePathname)
 
-        set(this.selectedFile, file)
-        set(this.selectedContent, content)
+          if (text === 'null') {
+            alert("Can't open file")
+            return
+          }
+
+          set(this.selectedFile, null)
+          set(this.selectedContent, null)
+
+          const content = textToContent(text)
+
+          setTimeout(() => {
+            set(this.selectedFile, relativePathname)
+            set(this.selectedContent, content)
+          }, 0)
+        } catch (e) {
+          alert("Can't open file")
+          console.log(e)
+        }
       }
     )
 
     const saveFile = State.useStoreCallback((get) => async () => {
+      const projectDirectory = get(this.projectDirectory)
       const selectedFile = get(this.selectedFile)
       const selectedContent = get(this.selectedContent)
 
       if (selectedContent) {
-        db.fs.writeFile(`../src/${selectedFile}`, selectedContent)
+        db.fs.writeFile(`${projectDirectory}/${selectedFile}`, selectedContent)
       }
     })
 
     return useMemo(
       () => ({
+        openDirectory,
         openFile,
         saveFile,
       }),

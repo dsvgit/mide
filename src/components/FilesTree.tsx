@@ -7,15 +7,11 @@ import { FilesStore } from '@/state/FilesStore'
 import { ITreeNode } from '@/db/db'
 
 export const FilesTree = () => {
-  const root = useRecoilValue(FilesStore.root)
-  const fileActions = FilesStore.useFileActions()
-
-  const openFile = (file: string) => {
-    fileActions.openFile(`../src/${file}`, file)
-  }
+  const filesTree = useRecoilValue(FilesStore.filesTree)
+  const { openFile, openDirectory, saveFile } = FilesStore.useFileActions()
 
   const renderTree = (node: ITreeNode) => (
-    <TreeItem key={node.path} nodeId={node.path} label={node.path}>
+    <TreeItem key={node.path} nodeId={node.path} label={node.title}>
       {Array.isArray(node.children)
         ? node.children.map((node) => renderTree(node))
         : null}
@@ -24,26 +20,35 @@ export const FilesTree = () => {
 
   return (
     <div className="filesTree">
-      <TreeView
-        aria-label="rich object"
-        defaultCollapseIcon={'▼'}
-        defaultExpanded={['../src']}
-        defaultExpandIcon={'▶'}
-        sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-        onNodeSelect={(_: SyntheticEvent, value: string) => {
-          const parts = value.split('/')
-          const filename = parts[parts.length - 1]
+      {filesTree && (
+        <TreeView
+          aria-label="rich object"
+          defaultCollapseIcon={'▼'}
+          defaultExpanded={['']}
+          defaultExpandIcon={'▶'}
+          sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
+          onNodeSelect={(_: SyntheticEvent, value: string) => {
+            const parts = value.split('/')
+            const filename = parts[parts.length - 1]
 
-          if (filename.includes('.')) {
-            openFile(value)
-          }
-        }}
-      >
-        {renderTree(root)}
-      </TreeView>
+            if (filename.includes('.')) {
+              openFile(value)
+            }
+          }}
+        >
+          {renderTree(filesTree)}
+        </TreeView>
+      )}
       <button
         onClick={() => {
-          fileActions.saveFile()
+          openDirectory()
+        }}
+      >
+        Open Folder
+      </button>
+      <button
+        onClick={() => {
+          saveFile()
         }}
       >
         Save

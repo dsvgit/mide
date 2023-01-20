@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { SlateEditor } from '@/slate/SlateEditor'
 import { FilesStore } from '@/state/FilesStore'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 export const CodeEditor = () => {
   const selectedFile = useRecoilValue(FilesStore.selectedFile)
@@ -16,11 +17,13 @@ export const CodeEditor = () => {
   const language = selectedFile?.split('.').pop()
 
   return (
-    <SlateEditor
-      value={value}
-      setValue={setValue}
-      onSave={saveFile}
-      language={language}
-    />
+    <ErrorBoundary>
+      <SlateEditor
+        value={value}
+        setValue={setValue}
+        onSave={saveFile}
+        language={language}
+      />
+    </ErrorBoundary>
   )
 }
