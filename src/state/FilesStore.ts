@@ -1,10 +1,12 @@
 /* eslint react-hooks/rules-of-hooks: 0 */
-import { atom, selector, useRecoilCallback } from 'recoil'
+import { atom, selector } from 'recoil'
 import { Descendant } from 'slate'
 import { useMemo } from 'react'
 
 import { db } from '@/db/provider'
 import { ITreeNode } from '@/db/db'
+import { textToContent } from '@/slate/utils'
+import { State } from '@/state/State'
 
 export const FilesStore = new (class {
   root = selector<ITreeNode>({
@@ -25,33 +27,22 @@ export const FilesStore = new (class {
   })
 
   useFileActions = () => {
-    const openFile = useRecoilCallback(
-      ({ set }) =>
-        async (path: string, file: string) => {
-          set(this.selectedFile, null)
-          set(this.selectedFile, file)
+    const openFile = State.useStoreCallback(
+      (_, set) => async (path: string, file: string) => {
+        set(this.selectedFile, null)
+        set(this.selectedContent, null)
 
-          const text = await db.fs.readFile(path)
-          const content = text
-            .trimStart()
-            .split('\n')
-            .map((line) => ({
-              type: 'paragraph',
-              children: [{ text: line }],
-            })) as Descendant[]
+        const text = await db.fs.readFile(path)
+        const content = textToContent(text)
 
-          set(this.selectedContent, null)
-          setTimeout(() => {
-            set(this.selectedContent, content)
-          }, 10)
-        }
+        set(this.selectedFile, file)
+        set(this.selectedContent, content)
+      }
     )
 
-    const saveFile = useRecoilCallback(({ snapshot }) => async () => {
-      const selectedFile = await snapshot.getLoadable(this.selectedFile)
-        .contents
-      const selectedContent = await snapshot.getLoadable(this.selectedContent)
-        .contents
+    const saveFile = State.useStoreCallback((get) => async () => {
+      const selectedFile = get(this.selectedFile)
+      const selectedContent = get(this.selectedContent)
 
       if (selectedContent) {
         db.fs.writeFile(`../src/${selectedFile}`, selectedContent)

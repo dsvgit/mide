@@ -1,4 +1,4 @@
-import { Descendant } from 'slate'
+import { textToContent } from '@/slate/utils'
 
 export const text = `
 import React from 'react'
@@ -12,10 +12,4 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 )
 `
 
-export const initialValue = text
-  .trimStart()
-  .split('\n')
-  .map((line) => ({
-    type: 'paragraph',
-    children: [{ text: line }],
-  })) as Descendant[]
+export const initialValue = textToContent(text)

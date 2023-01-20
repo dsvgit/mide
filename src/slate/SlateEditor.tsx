@@ -3,9 +3,9 @@ import { createEditor, Descendant } from 'slate'
 import { Editable, Slate, withReact } from 'slate-react'
 import { withHistory } from 'slate-history'
 
-import { useDecorate } from '@/slate/useDecorate'
-import { useRenderLeaf } from '@/slate/useRenderLeaf'
-import { useOnKeydown } from '@/slate/useOnKeydown'
+import { useDecorate } from '@/slate/hooks/useDecorate'
+import { useRenderLeaf } from '@/slate/hooks/useRenderLeaf'
+import { useOnKeydown } from '@/slate/hooks/useOnKeydown'
 
 export type SlateEditorProps = {
   value?: Descendant[]
