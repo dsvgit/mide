@@ -1,72 +1,107 @@
 import Prism from 'prismjs'
+import 'prismjs/components/prism-json'
+import 'prismjs/components/prism-markdown'
 import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-jsx'
 import 'prismjs/components/prism-typescript'
 import 'prismjs/components/prism-tsx'
-import { NodeEntry, Range, Text } from 'slate'
-import { useCallback } from 'react'
+import { Editor, NodeEntry, Range, Node, Point } from 'slate'
 
 import { SlateEditorProps } from '@/slate/SlateEditor'
 
+export const extToLanguage: Record<string, string> = {
+  md: 'markdown',
+  ts: 'typescript',
+  js: 'javascript',
+  jsx: 'jsx',
+  tsx: 'tsx',
+  json: 'json',
+  html: 'html',
+  css: 'css',
+  xml: 'xml',
+}
+
+type TokenEntry = {
+  token: Prism.Token | string
+  parent: TokenEntry | null
+}
+
 export const useDecorate = (options: Partial<SlateEditorProps>) => {
-  const decorate: (entry: NodeEntry) => Range[] = useCallback(
-    ([node, path]) => {
-      const ranges: Range[] = []
+  const decorate: (entry: NodeEntry) => Range[] = ([editor, path]) => {
+    const ranges: Range[] = []
+    const language = extToLanguage[options.ext!]
 
-      if (!Text.isText(node)) {
-        return ranges
-      }
+    if (!Editor.isEditor(editor) || !language) {
+      return ranges
+    }
 
-      const tokens = Prism.tokenize(
-        node.text,
-        Prism.languages[options.language || 'plaintext']
-      )
+    const text = editor.children.map((node) => Node.string(node)).join('\n')
 
-      let start = 0
-      for (const token of tokens) {
-        const length = getLength(token)
-        const end = start + length
+    const tokens = Prism.tokenize(text, Prism.languages[language])
+    const positions = Editor.positions(editor, {
+      at: path,
+      unit: 'character',
+    })
 
-        if (typeof token !== 'string') {
-          ranges.push({
-            [token.type]: true,
-            anchor: { path, offset: start },
-            focus: { path, offset: end },
-          })
+    const stack: TokenEntry[] = []
+    for (let i = tokens.length - 1; i >= 0; i--) {
+      stack.push({ token: tokens[i], parent: null })
+    }
+
+    let start = positions.next().value
+    while (stack.length) {
+      const tokenEntry = stack.pop()!
+      const token = tokenEntry.token
+
+      if (typeof token !== 'string' && Array.isArray(token.content)) {
+        for (let i = token.content.length - 1; i >= 0; i--) {
+          stack.push({ parent: tokenEntry, token: token.content[i] })
+        }
+      } else {
+        for (let i = 0; i < token.length - 1; i++) {
+          positions.next()
+        }
+
+        const end = positions.next().value
+
+        const range = {
+          anchor: start!,
+          focus: end!,
+        }
+
+        const tokenEntryPath = getTokenEntryPath(tokenEntry).reverse()
+        for (const tokenEntry of tokenEntryPath) {
+          const type = tokenEntry.token.type
+          if (range.script && type === 'tag') {
+            continue
+          }
+
+          range[type] = true
+
+          ranges.push(range)
         }
 
         start = end
       }
+    }
 
-      return ranges
-    },
-    []
-  )
+    // console.log(ranges)
+
+    return []
+  }
 
   return decorate
 }
 
-const getLength = (token: string | Prism.Token): number => {
-  if (typeof token === 'string') {
-    return token.length
-  } else if (typeof token.content === 'string') {
-    return token.content.length
-  } else if (Array.isArray(token.content)) {
-    return token.content.reduce((l, t) => l + getLength(t), 0)
+const getTokenEntryPath = (tokenEntry: TokenEntry) => {
+  const path: TokenEntry[] = [tokenEntry]
+  let parent = tokenEntry.parent
+
+  while (parent) {
+    path.push(parent)
+    tokenEntry = parent
+    parent = tokenEntry.parent
   }
 
-  throw new Error('Unreachable code')
+  return path.reverse()
 }
-
-// modifications and additions to prism library
-
-Prism.languages.tsx = Prism.languages.extend('tsx', {
-  space: {
-    pattern: /\s/,
-    // lookbehind: true,
-    greedy: true,
-  },
-})
-Prism.languages.insertBefore('tsx', 'prolog', {
-  comment: { pattern: /\/\/[^\n]*/, alias: 'comment' },
-})

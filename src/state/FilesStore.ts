@@ -56,6 +56,20 @@ export const FilesStore = new (class {
       }
     })
 
+    const refreshDirectory = State.useStoreCallback((get, set) => async () => {
+      const projectDirectory = get(this.projectDirectory)
+
+      if (projectDirectory) {
+        set(this.projectDirectory, null)
+
+        setTimeout(() => {
+          set(this.selectedFile, null)
+          set(this.selectedContent, null)
+          set(this.projectDirectory, projectDirectory)
+        }, 10)
+      }
+    })
+
     const openFile = State.useStoreCallback(
       (get, set) => async (relativePathname: string) => {
         try {
@@ -96,6 +110,7 @@ export const FilesStore = new (class {
     return useMemo(
       () => ({
         openDirectory,
+        refreshDirectory,
         openFile,
         saveFile,
       }),

@@ -17,7 +17,8 @@
     "jsx": "react-jsx",
     "baseUrl": "." ,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "slate-react/*": ["node_modules/slate-packages/packages/slate-react/*"]
     }
   },
   "include": ["src"],

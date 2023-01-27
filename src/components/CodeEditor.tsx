@@ -22,7 +22,7 @@ export const CodeEditor = () => {
         value={value}
         setValue={setValue}
         onSave={saveFile}
-        language={language}
+        ext={language}
       />
     </ErrorBoundary>
   )

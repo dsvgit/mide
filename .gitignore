@@ -25,3 +25,12 @@ dist-ssr
 
 # bundle analyzer stats
 stats.html
+
+# Recommendation from https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored (not using Zero-installs)
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!/.yarn/sdks/
+!/.yarn/sdks/**/lib/
+!.yarn/versions
+.pnp.*

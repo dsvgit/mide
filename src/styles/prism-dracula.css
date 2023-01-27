@@ -8,10 +8,9 @@
  * @version 1.0
  */
 
-div[class*='language-'],
-div[class*='language-'] {
+.editable > .code_block {
   color: #a9b7c6;
-  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: Consolas, Monaco, "Andale Mono", monospace;
   direction: ltr;
   text-align: left;
   white-space: pre-wrap;
@@ -31,37 +30,27 @@ div[class*='language-'] {
   caret-color: #bbb;
 }
 
-div[class*='language-']::-moz-selection,
-div[class*='language-'] ::-moz-selection,
-div[class*='language-']::-moz-selection,
-div[class*='language-'] ::-moz-selection {
+.editable > .code_block::-moz-selection,
+.editable > .code_block ::-moz-selection {
   color: inherit;
   background: rgba(33, 66, 131, 0.85);
 }
 
-div[class*='language-']::selection,
-div[class*='language-'] ::selection,
-div[class*='language-']::selection,
-div[class*='language-'] ::selection {
+.editable > .code_block::selection,
+.editable > .code_block ::selection {
   color: inherit;
   background: rgba(33, 66, 131, 0.85);
 }
 
 /* Code blocks */
-div[class*='language-'] {
+div[class*="language-"] {
   overflow: auto;
 }
 
-/*:not(pre) > div[class*='language-'],*/
-/*div[class*='language-'] {*/
-/*  background: #2b2b2b;*/
-/*}*/
-
-/*!* Inline code *!*/
-/*:not(pre) > div[class*='language-'] {*/
-/*  padding: 0.1em;*/
-/*  border-radius: 0.3em;*/
-/*}*/
+.token,
+.token.tag.spread {
+  color: #a9b7c6;
+}
 
 .token.comment,
 .token.prolog,
@@ -80,14 +69,16 @@ div[class*='language-'] {
 
 .token.operator,
 .token.punctuation,
-.token.attr-name {
+.token.attr-name,
+.token.spread.operator {
   color: #a9b7c6;
 }
 
 .token.tag,
 .token.tag .punctuation,
 .token.doctype,
-.token.builtin {
+.token.builtin,
+.token.tag.spread.punctuation {
   color: #e8bf6a;
 }
 

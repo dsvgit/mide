@@ -8,6 +8,15 @@ export default defineConfig({
   base: 'https://dsvgit.github.io/mide/',
   plugins: [react(), visualizer()],
   resolve: {
-    alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+    alias: [
+      { find: '@', replacement: path.resolve(__dirname, 'src') },
+      {
+        find: 'slate-react',
+        replacement: path.resolve(
+          __dirname,
+          'node_modules/slate-packages/packages/slate-react'
+        ),
+      },
+    ],
   },
 })
