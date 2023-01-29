@@ -11,11 +11,12 @@
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },
-    "dependencies": {
+  "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/lab": "^5.0.0-alpha.116",
     "@mui/material": "^5.11.5",
+    "@octokit/core": "^4.2.0",
     "@tauri-apps/api": "^1.2.0",
     "@types/prismjs": "^1.26.0",
     "classnames": "^2.3.2",
