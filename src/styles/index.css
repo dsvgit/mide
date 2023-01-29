@@ -85,7 +85,7 @@ button {
   height: 100%;
 }
 
-.editable > .code_block::before {
+.editable > .code_line::before {
   position: absolute;
   left: 0;
   width: 30px;
@@ -98,7 +98,7 @@ button {
   content: counter(terminal-counter) "";
 }
 
-.editable > :not(.code_block) {
+.editable > :not(.code_line) {
   counter-reset: terminal-counter;
 }
 

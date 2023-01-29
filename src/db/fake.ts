@@ -6,7 +6,7 @@ import { DB, ITreeNode } from '@/db/db'
 const root: ITreeNode = {
   path: '/',
   title: 'project',
-  children: [{ path: 'index.ts', title: 'index.ts', children: [] }],
+  children: [{ path: 'index.tsx', title: 'index.tsx', children: [] }],
 }
 
 export const fakeDb: DB = {
