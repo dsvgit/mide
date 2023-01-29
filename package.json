@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -n web,tauri  \"yarn web:dev\" \"yarn tauri:dev\"",
-    "web:dev": "vite",
+    "web:dev": "VITE_WEB=true vite",
+    "app:dev": "VITE_APP=true vite",
     "tauri:dev": "cargo tauri dev",
-    "build": "tsc && vite build",
+    "web:build": "VITE_WEB=true tsc && vite build",
+    "app:build": "VITE_APP=true tsc && vite build",
+    "tauri:build": "cargo tauri build",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },

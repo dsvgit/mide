@@ -5,7 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'https://dsvgit.github.io/mide/',
+  base: process.env.VITE_APP ? undefined : 'https://dsvgit.github.io/mide/',
   plugins: [react(), visualizer()],
   resolve: {
     alias: [

@@ -12,7 +12,7 @@ import { dialog } from '@tauri-apps/api'
 export const FilesStore = new (class {
   projectDirectory = atom<string | null>({
     key: 'FilesStore_projectDirectory',
-    default: '..',
+    default: window.__TAURI_IPC__ !== undefined ? null : 'project',
   })
 
   filesTree = selector<ITreeNode | null>({
