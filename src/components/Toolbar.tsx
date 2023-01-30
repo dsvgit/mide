@@ -7,7 +7,7 @@ export const Toolbar = () => {
 
   return (
     <div>
-      <button onClick={openDirectory}>Open Folder</button>
+      <button onClick={openDirectory}>Open</button>
       <button onClick={refreshDirectory}>Refresh</button>
       <button onClick={saveFile}>Save</button>
     </div>
