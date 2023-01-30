@@ -27,6 +27,7 @@
     "is-hotkey": "^0.2.0",
     "nanoid": "^4.0.0",
     "prismjs": "^1.29.0",
+    "re-resizable": "^6.9.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recoil": "^0.7.6",

@@ -11,7 +11,7 @@ export const CodeEditor = () => {
   const { saveFile } = FilesStore.useFileActions()
 
   if (!value) {
-    return null
+    return <div className="center">no file selected</div>
   }
 
   const language = selectedFile?.split('.').pop()
