@@ -6,7 +6,7 @@ const Leaf = (props: RenderLeafProps) => {
   const leaf = props.leaf as any
 
   const { text, ...rest } = leaf
-  const className = `token ${Object.keys(rest).join(' ')}`
+  const className = Object.keys(rest).join(' ')
 
   return (
     <span {...attributes} className={className}>
